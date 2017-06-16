@@ -428,7 +428,7 @@ if __name__ == "__main__":
 
     samples_array = hackrf_raw_IQ_format(df17_array)
 
-    SamplesFile = open("HRF_samples.iq", "wb")
+    SamplesFile = open("Samples.iq8s", "wb")
     SamplesFile.write(samples_array)
 
 ###############################################################
