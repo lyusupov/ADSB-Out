@@ -50,3 +50,10 @@ $ sudo dump1090 --net --freq 868000000
 ![](https://github.com/lyusupov/ADSB-Out/raw/master/documents/images/dump1090.JPG)
 
 ## References
+1. "Gr-Air-Modes", Nick Foster, 2012
+2. "EXPLOITING THE AUTOMATIC DEPENDENT SURVEILLANCEBROADCAST SYSTEM VIA FALSE TARGET INJECTION", Domenic Magazu III, 2012
+3. "ADS-B out by HACKRF and received over the air by rtl-sdr dongle and dump1090", Jiao Xianjun, 2014
+4. "Ghost in the Air(Trafﬁc): On insecurity of ADS-B protocol and practical attacks on ADS-B devices", Andrei Costin and Aurelien Francillon, 2015
+5. "ADS-B Decoding Guide", Junzi Sun, 2017
+
+
