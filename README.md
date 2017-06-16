@@ -44,9 +44,9 @@ $
 ```
 ## Validation
 ```
-$ sudo ./dump1090 --net --freq 868000000
+$ sudo dump1090 --net --freq 868000000
 ...
 ```
-
+![](https://github.com/lyusupov/ADSB-Out/raw/master/documents/images/dump1090.JPG)
 
 ## References
