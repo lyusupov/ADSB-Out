@@ -5,15 +5,7 @@ from encoder import *
 from location import *
 from conversions import *
 from parity import *
-
-    
-###############################################################
-
-
-
-###############################################################
-
-
+from HackRF import HackRF
 
 ###############################################################
 
@@ -129,36 +121,7 @@ def frame_1090es_ppm_modulate(even, odd):
     
     return bytearray(ppm)
 
-def hackrf_raw_IQ_format(ppm):
-    """
-    real_signal = []
-    bits = numpy.unpackbits(numpy.asarray(ppm, dtype=numpy.uint8))
-    for bit in bits:
-        if bit == 1:
-            I = 127
-        else:
-            I = 0
-        real_signal.append(I)
 
-    analytic_signal = hilbert(real_signal)
-
-    #for i in range(len(real_signal)):
-    #    print i, real_signal[i], int(analytic_signal[i])
-    """
-
-    signal = []
-    bits = numpy.unpackbits(numpy.asarray(ppm, dtype=numpy.uint8))
-    for bit in bits:
-        if bit == 1:
-            I = 127
-            Q = 127
-        else:
-            I = 0
-            Q = 0
-        signal.append(I)
-        signal.append(Q)
-
-    return bytearray(signal)
     
 if __name__ == "__main__":
 
@@ -195,9 +158,8 @@ if __name__ == "__main__":
     #OutFile = open("filename.bin", "wb")
     #OutFile.write(df17_array)
 
-    samples_array = hackrf_raw_IQ_format(df17_array)
+    hackrf = HackRF()
+    samples_array = hackrf.hackrf_raw_IQ_format(df17_array)
 
     SamplesFile = open("Samples.iq8s", "wb")
     SamplesFile.write(samples_array)
-
-###############################################################
