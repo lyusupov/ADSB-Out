@@ -42,6 +42,10 @@ fclose(fd) done
 exit
 $
 ```
+ * -t is the input file to transmit
+ * -f is the frequency in hertz. In the real world this would be 1090000000 but do not use that
+ * -s is the sample rate in hertz
+ * -x is the gain
 ## Validation
 ```
 $ sudo dump1090 --net --freq 868000000
