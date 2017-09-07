@@ -4,6 +4,7 @@
 from HackRF import HackRF
 from PPM import PPM
 from ModeS import ModeS
+from sys import argv, exit
 import os
 
 ###############################################################
@@ -26,8 +27,6 @@ import os
 
     
 if __name__ == "__main__":
-
-    from sys import argv, exit
     
     argc = len(argv)
     if argc != 5:
