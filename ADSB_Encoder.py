@@ -64,5 +64,6 @@ if __name__ == "__main__":
     samples_array = hackrf.hackrf_raw_IQ_format(df17_array)
 
     SamplesFile = open("Samples.iq8s", "wb") # TODO make this a function and take the file name. Also have the option to run dd on it.
+    # TODO make it empty the file first.
     SamplesFile.write(samples_array)
     os.system("dd if=Samples.iq8s of=Samples_256K.iq8s bs=4k seek=63") # TODO make this a flag, also make it take the file name
