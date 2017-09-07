@@ -6,6 +6,7 @@ from location import *
 from conversions import *
 from parity import *
 from HackRF import HackRF
+from PPM import PPM
 import os
 
 ###############################################################
@@ -89,7 +90,7 @@ def df17_pos_rep_encode(ca, icao, tc, ss, nicsb, alt, time, lat, lon, surface):
     
     return (df17_even_bytes, df17_odd_bytes)
 
-def frame_1090es_ppm_modulate(even, odd):
+"""def frame_1090es_ppm_modulate(even, odd):
     ppm = [ ]
 
     for i in range(48):    # pause
@@ -121,7 +122,7 @@ def frame_1090es_ppm_modulate(even, odd):
     #print '[{}]'.format(', '.join(hex(x) for x in ppm))
     
     return bytearray(ppm)
-
+"""
 
     
 if __name__ == "__main__":
@@ -153,8 +154,8 @@ if __name__ == "__main__":
 
     #print ''.join(format(x, '02x') for x in df17_even)
     #print ''.join(format(x, '02x') for x in df17_odd)
-
-    df17_array = frame_1090es_ppm_modulate(df17_even, df17_odd)
+    ppm = PPM()
+    df17_array = ppm.frame_1090es_ppm_modulate(df17_even, df17_odd)
 
     #OutFile = open("filename.bin", "wb")
     #OutFile.write(df17_array)
