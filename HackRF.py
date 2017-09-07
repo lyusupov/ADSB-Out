@@ -11,7 +11,7 @@ class HackRF:
             ppm: this is some data in ppm (pulse position modulation) which you want to convert into raw IQ format
             
         Returns:
-            bytearray containig the IQ data
+            bytearray: containing the IQ data
         """
 
         signal = []

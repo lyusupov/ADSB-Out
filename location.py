@@ -40,6 +40,10 @@ def encode_alt_modes(alt, bit13):
 latz = 15
 
 def nz(ctype):
+	"""
+	Number of geographic latitude zones between equator and a pole. It is set to NZ = 15 for Mode-S CPR encoding
+	https://adsb-decode-guide.readthedocs.io/en/latest/content/cpr.html
+	"""
 	return 4 * latz - ctype
 
 def dlat(ctype, surface):
@@ -68,6 +72,8 @@ def dlon(declat_in, ctype, surface):
 	return tmp / nlcalc
 
 #encode CPR position
+# https://adsb-decode-guide.readthedocs.io/en/latest/content/cpr.html
+# compact position reporting
 def cpr_encode(lat, lon, ctype, surface):
     if surface is True:
         scalar = 2.**19

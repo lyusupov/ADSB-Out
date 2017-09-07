@@ -6,6 +6,7 @@ from location import *
 from conversions import *
 from parity import *
 from HackRF import HackRF
+import os
 
 ###############################################################
 
@@ -29,7 +30,7 @@ import numpy
 
 def df17_pos_rep_encode(ca, icao, tc, ss, nicsb, alt, time, lat, lon, surface):
 
-    format = 17
+    format = 17 #The format type of an ADSB message
 
     enc_alt =	encode_alt_modes(alt, surface)
     #print "Alt(%r): %X " % (surface, enc_alt)
@@ -141,10 +142,10 @@ if __name__ == "__main__":
     lon = float(argv[3])
     alt = float(argv[4])
 
-    ca = 5
-    tc = 11
-    ss = 0
-    nicsb = 0    
+    ca = 5 # Capability 
+    tc = 11 # Type Code see: https://adsb-decode-guide.readthedocs.io/en/latest/content/introduction.html#ads-b-message-types
+    ss = 0 # Surveillance status
+    nicsb = 0 # NIC supplement-B
     time = 0       
     surface = False
 
@@ -161,5 +162,6 @@ if __name__ == "__main__":
     hackrf = HackRF()
     samples_array = hackrf.hackrf_raw_IQ_format(df17_array)
 
-    SamplesFile = open("Samples.iq8s", "wb")
+    SamplesFile = open("Samples.iq8s", "wb") # TODO make this a function and take the file name. Also have the option to run dd on it.
     SamplesFile.write(samples_array)
+    os.system("dd if=Samples.iq8s of=Samples_256K.iq8s bs=4k seek=63") # TODO make this a flag, also make it take the file name
