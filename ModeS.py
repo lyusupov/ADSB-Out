@@ -1,4 +1,5 @@
-from location import *
+from ModeSLocation import ModeSLocation
+import math
 
 class ModeS:
     """This class handles the ModeS ADSB manipulation
@@ -11,12 +12,13 @@ class ModeS:
 
         format = 17 #The format type of an ADSB message
 
-        enc_alt =	encode_alt_modes(alt, surface)
+        location = ModeSLocation()
+        enc_alt =	location.encode_alt_modes(alt, surface)
         #print "Alt(%r): %X " % (surface, enc_alt)
 
         #encode that position
-        (evenenclat, evenenclon) = cpr_encode(lat, lon, False, surface)
-        (oddenclat, oddenclon)   = cpr_encode(lat, lon, True, surface)
+        (evenenclat, evenenclon) = location.cpr_encode(lat, lon, False, surface)
+        (oddenclat, oddenclon)   = location.cpr_encode(lat, lon, True, surface)
 
         #print "Even Lat/Lon: %X/%X " % (evenenclat, evenenclon)
         #print "Odd  Lat/Lon: %X/%X " % (oddenclat, oddenclon)
