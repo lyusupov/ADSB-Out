@@ -10,7 +10,9 @@ class Encoder:
     Manchester encoding and decoding is also included, and by default will use
     least bit ordering for the byte that is to be included in the array.
     """
-
+###############################################################
+# Further work on fork
+# Copyright (C) 2017 David Robinson
     def extract_bit(self, byte, pos):
         """
         Extract a bit from a given byte using MS ordering.

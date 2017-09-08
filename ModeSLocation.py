@@ -26,7 +26,9 @@ class ModeSLocation:
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
 # 
-
+###############################################################
+# Further work on fork
+# Copyright (C) 2017 David Robinson
     def encode_alt_modes(self, alt, bit13):
         mbit = False
         qbit = True

@@ -1,5 +1,7 @@
 import numpy
-
+###############################################################
+# Further work on fork
+# Copyright (C) 2017 David Robinson
 class HackRF:
     """The HackRF class has functions from converting data into a format into which the hackrf can process
     """
