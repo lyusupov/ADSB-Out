@@ -16,15 +16,7 @@ $ ls Samples.iq8s
 Samples.iq8s
 $
 ```
-2. Make the raw signal file aligned to 256K buffer size:
-```
-$ dd if=Samples.iq8s of=Samples_256K.iq8s bs=4k seek=63
-1+0 records in
-1+0 records out
-4096 bytes (4.1 kB) copied, 0.00110421 s, 3.7 MB/s
-$
-```
-3. Transmit the signal into air:
+2. Transmit the signal into air:
 ```
 $ hackrf_transfer -t Samples_256K.iq8s -f 868000000 -s 2000000 -x 10
 call hackrf_sample_rate_set(2000000 Hz/2.000 MHz)
