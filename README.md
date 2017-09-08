@@ -16,15 +16,7 @@ $ ls Samples.iq8s
 Samples.iq8s
 $
 ```
-2. Make the raw signal file aligned to 256K buffer size:
-```
-$ dd if=Samples.iq8s of=Samples_256K.iq8s bs=4k seek=63
-1+0 records in
-1+0 records out
-4096 bytes (4.1 kB) copied, 0.00110421 s, 3.7 MB/s
-$
-```
-3. Transmit the signal into air:
+2. Transmit the signal into air:
 ```
 $ hackrf_transfer -t Samples_256K.iq8s -f 868000000 -s 2000000 -x 10
 call hackrf_sample_rate_set(2000000 Hz/2.000 MHz)
@@ -42,6 +34,10 @@ fclose(fd) done
 exit
 $
 ```
+ * -t is the input file to transmit
+ * -f is the frequency in hertz. In the real world this would be 1090000000 but do not use that
+ * -s is the sample rate in hertz
+ * -x is the gain
 ## Validation
 ```
 $ sudo dump1090 --net --freq 868000000
@@ -56,4 +52,5 @@ $ sudo dump1090 --net --freq 868000000
 4. "*Ghost in the Air(Trafﬁc): On insecurity of ADS-B protocol and practical attacks on ADS-B devices*", **Andrei Costin and Aurelien Francillon**, 2015
 5. "*ADS-B Decoding Guide*", **Junzi Sun**, 2017
 
-
+# History
+This is a fork orginally from https://github.com/lyusupov/ADSB-Out in September 2017. 
