@@ -16,8 +16,7 @@ $ ls Samples.iq8s
 Samples.iq8s
 $
 ```
-
-1. Transmit the signal into air:
+2. Transmit the signal into air:
 ```
 $ hackrf_transfer -t Samples_256K.iq8s -f 868000000 -s 2000000 -x 10
 call hackrf_sample_rate_set(2000000 Hz/2.000 MHz)
