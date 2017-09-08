@@ -1,6 +1,8 @@
 import numpy
 from Encoder import Encoder
-
+###############################################################
+# Further work on fork
+# Copyright (C) 2017 David Robinson
 class PPM:
     """The PPM class contains functions about PPM manipulation
     """

@@ -1,6 +1,8 @@
 from ModeSLocation import ModeSLocation
 import math
-
+###############################################################
+# Further work on fork
+# Copyright (C) 2017 David Robinson
 class ModeS:
     """This class handles the ModeS ADSB manipulation
     """

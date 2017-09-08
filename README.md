@@ -9,12 +9,49 @@ open source "ADS-B In" solutions. One known good example is [Stratux](https://gi
 The source code is published for academic purpose only.
 
 ## Instructions
-1. Execute *ADSB_Encoder.py* script with `<ICAO>` `<Latitude>` `<Longtitude>` `<Altitude>` arguments:
+1. Execute *ADSB_Encoder.py* all the options have defaults so none are needed to generate with defaults. Running help will show you the optiosn you can change:
 ```
-$ ADSB_Encoder.py  0xABCDEF 12.34 56.78 9999.0
-$ ls Samples.iq8s
-Samples.iq8s
-$
+$ ADSB_Encoder.py
+
+$ ADSB_Encoder.py -h
+Usage: ADSB_Encoder.py [options]
+
+Options:
+  -h, --help            show this help message and exit
+  -i ICAO, --icao=ICAO  The ICAO number for the plane in hex. Ensure the ICAO
+                        is prefixed with '0x' to ensure this is parsed as a
+                        hex number. Default: 0xABCDEF
+  --lat=LATITUDE, --latitude=LATITUDE
+                        Latitude for the plane in decminal degrees. Default:
+                        12.34
+  --lon=LONGITUDE, --long=LONGITUDE, --longitude=LONGITUDE
+                        Longitude for the place in decminal degrees. Default:
+                        56.78
+  -a ALTITUDE, --alt=ALTITUDE, --altitude=ALTITUDE
+                        Altitude in decminal feet. Default: 9876.5
+  --ca=CAPABILITY, --capability=CAPABILITY
+                        The capability. (Think this is always 5 from ADSB
+                        messages. More info would be appreciate).  Default: 5
+  --tc=TYPECODE, --typecode=TYPECODE
+                        The type for the ADSB messsage. See https://adsb-
+                        decode-guide.readthedocs.io/en/latest/content/introduc
+                        tion.html#ads-b-message-types for more information.
+                        Default: 11
+  --ss=SURVEILLANCESTATUS, --surveillancestatus=SURVEILLANCESTATUS
+                        The surveillance status. (Think this is always 0 from
+                        ADSB messages. More info would be appreciate).
+                        Default: 0
+  --nicsb=NICSUPPLEMENTB, --nicsupplementb=NICSUPPLEMENTB
+                        The  NIC supplement-B.(Think this is always 0 from
+                        ADSB messages. More info would be appreciate).
+                        Default: 0
+  --time=TIME           The  time. (Think this is always 0 from ADSB messages.
+                        More info would be appreciate).  Default: 0
+  -s SURFACE, --surface=SURFACE
+                        If the plane is on the ground or not. Default: False
+  -o OUTPUTFILENAME, --out=OUTPUTFILENAME, --output=OUTPUTFILENAME
+                        The iq8s output filename. This is the file which you
+                        will feed into the hackRF. Default: Samples_256K.iq8s
 ```
 2. Transmit the signal into air:
 ```
