@@ -68,18 +68,22 @@ if __name__ == "__main__":
     logger.info('Starting ADSB Encoder')
     logger.debug('The arguments: %s' % (arguments))
 
-    modes = ModeS()
-    (df17_even, df17_odd) = modes.df17_pos_rep_encode(arguments.capability, arguments.icao, arguments.typecode, arguments.surveillancestatus, arguments.nicsupplementb, arguments.altitude, arguments.time, arguments.latitude, arguments.longitude, arguments.surface)
-
-    ppm = PPM()
-    df17_array = ppm.frame_1090es_ppm_modulate(df17_even, df17_odd)
-
-    hackrf = HackRF()
-    samples_array = hackrf.hackrf_raw_IQ_format(df17_array)
-
+    logger.info('Repeating the message %s times' % (arguments.repeats))
     SamplesFile = open('tmp.iq8s', 'wb')
-    SamplesFile.write(samples_array)
+    for i in range(0, arguments.repeats):
+        modes = ModeS()
+        (df17_even, df17_odd) = modes.df17_pos_rep_encode(arguments.capability, arguments.icao, arguments.typecode, arguments.surveillancestatus, arguments.nicsupplementb, arguments.altitude, arguments.time, arguments.latitude, arguments.longitude, arguments.surface)
+
+        ppm = PPM()
+        df17_array = ppm.frame_1090es_ppm_modulate(df17_even, df17_odd)
+
+        hackrf = HackRF()
+        samples_array = hackrf.hackrf_raw_IQ_format(df17_array)
+
+        
+        SamplesFile.write(samples_array)
     SamplesFile.close()
+    os.system('sync')    
     os.system("dd if=tmp.iq8s of=%s bs=4k seek=63" % (arguments.outputfilename)) # TODO redirect output to /dev/null
     os.system('sync')
     os.system('rm tmp.iq8s')
