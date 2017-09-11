@@ -10,7 +10,7 @@ import configparser
 import logging
 import logging.config
 import os
-import distutils
+import csv
 
 ###############################################################
 
@@ -61,7 +61,8 @@ def argParser():
     parser.add_argument('-s', '--surface', action='store', default=cfg.getboolean('plane', 'surface'), type=auto_bool, dest='surface', help='If the plane is on the ground or not. Default: %(default)s')
     parser.add_argument('-o', '--out', '--output', action='store', type=str, default=cfg.get('general', 'outputfilename'), dest='outputfilename', help='The iq8s output filename. This is the file which you will feed into the hackRF. Default: %(default)s')
     parser.add_argument('-r', '--repeats', action='store', dest='repeats', type=int, default=cfg.getint('general', 'repeats'), help='How many repeats of the data to perform. Default: %(default)s')
-    
+    parser.add_argument('--csv', '--csvfile', '--in', '--input', action='store', type=str, default=cfg.get('general', 'csvfile'), dest='csvfile', help='Import a CSV file with the plane data in it. Default: %(default)s')    
+    # TODO Make it so it can do a static checksum
     return parser.parse_args()
     
 if __name__ == "__main__":
@@ -76,21 +77,35 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
     logger.info('Starting ADSB Encoder')
     logger.debug('The arguments: %s' % (arguments))
-    print(arguments)
+
     logger.info('Repeating the message %s times' % (arguments.repeats))
+    
     SamplesFile = open('tmp.iq8s', 'wb')
-    for i in range(0, arguments.repeats):
-        modes = ModeS()
-        (df17_even, df17_odd) = modes.df17_pos_rep_encode(arguments.capability, arguments.icao, arguments.typecode, arguments.surveillancestatus, arguments.nicsupplementb, arguments.altitude, arguments.time, arguments.latitude, arguments.longitude, arguments.surface)
+    if arguments.csvfile == '':
+        logger.info('Processing default and command line options for a single plane')
+        for i in range(0, arguments.repeats):
+            modes = ModeS()
+            (df17_even, df17_odd) = modes.df17_pos_rep_encode(arguments.capability, arguments.icao, arguments.typecode, arguments.surveillancestatus, arguments.nicsupplementb, arguments.altitude, arguments.time, arguments.latitude, arguments.longitude, arguments.surface)
 
-        ppm = PPM()
-        df17_array = ppm.frame_1090es_ppm_modulate(df17_even, df17_odd)
+            ppm = PPM()
+            df17_array = ppm.frame_1090es_ppm_modulate(df17_even, df17_odd)
 
-        hackrf = HackRF()
-        samples_array = hackrf.hackrf_raw_IQ_format(df17_array)
+            hackrf = HackRF()
+            samples_array = hackrf.hackrf_raw_IQ_format(df17_array)
 
-        
-        SamplesFile.write(samples_array)
+            
+            SamplesFile.write(samples_array)
+    else:
+        logger.info('Processing CSV file')
+        with open(arguments.csvfile, newline='') as csvfile:
+            reader = csv.DictReader(csvfile, delimiter=',')
+            for row in reader:
+                logger.debug('Row from CSV: %s' % (row))
+                if not 'icao' in row.keys():
+                    print('Need ICAO')
+                if not 'latitude' in row.keys():
+                    print('Need Latitude')
+
     SamplesFile.close()
     os.system('sync')    
     os.system("dd if=tmp.iq8s of=%s bs=4k seek=63" % (arguments.outputfilename)) # TODO redirect output to /dev/null
