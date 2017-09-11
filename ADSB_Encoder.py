@@ -10,6 +10,7 @@ import configparser
 import logging
 import logging.config
 import os
+import distutils
 
 ###############################################################
 
@@ -35,6 +36,14 @@ import os
 def auto_int(x):
     """Parses HEX into for argParser"""
     return int(x, 0)
+    
+def auto_bool(x):
+    if x.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif x.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def argParser():
     #TODO add some contraint checking
@@ -49,7 +58,7 @@ def argParser():
     parser.add_argument('--ss', '--surveillancestatus', action='store', type=int, dest='surveillancestatus', default=cfg.getint('plane', 'surveillancestatus'), help='The surveillance status. (Think this is always 0 from ADSB messages. More info would be appreciate).  Default: %(default)s')
     parser.add_argument('--nicsb', '--nicsupplementb', action='store', type=int, dest='nicsupplementb', default=cfg.getint('plane', 'nicsupplementb'), help='The  NIC supplement-B.(Think this is always 0 from ADSB messages. More info would be appreciate).  Default: %(default)s')
     parser.add_argument('--time', action='store', type=int, dest='time', default=cfg.getint('plane', 'time'), help='The  time. (Think this is always 0 from ADSB messages. More info would be appreciate).  Default: %(default)s')
-    parser.add_argument('-s', '--surface', action='store', default=cfg.getboolean('plane', 'surface'), type=bool, dest='surface', help='If the plane is on the ground or not. Default: %(default)s')
+    parser.add_argument('-s', '--surface', action='store', default=cfg.getboolean('plane', 'surface'), type=auto_bool, dest='surface', help='If the plane is on the ground or not. Default: %(default)s')
     parser.add_argument('-o', '--out', '--output', action='store', type=str, default=cfg.get('general', 'outputfilename'), dest='outputfilename', help='The iq8s output filename. This is the file which you will feed into the hackRF. Default: %(default)s')
     parser.add_argument('-r', '--repeats', action='store', dest='repeats', type=int, default=cfg.getint('general', 'repeats'), help='How many repeats of the data to perform. Default: %(default)s')
     
@@ -67,7 +76,7 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
     logger.info('Starting ADSB Encoder')
     logger.debug('The arguments: %s' % (arguments))
-
+    print(arguments)
     logger.info('Repeating the message %s times' % (arguments.repeats))
     SamplesFile = open('tmp.iq8s', 'wb')
     for i in range(0, arguments.repeats):
