@@ -62,6 +62,9 @@ def argParser():
     parser.add_argument('-r', '--repeats', action='store', dest='repeats', type=int, default=cfg.getint('general', 'repeats'), help='How many repeats of the data to perform. Default: %(default)s')
     parser.add_argument('--csv', '--csvfile', '--in', '--input', action='store', type=str, default=cfg.get('general', 'csvfile'), dest='csvfile', help='Import a CSV file with the plane data in it. Default: %(default)s')    
     # TODO Make it so it can do a static checksum
+    # TODO Get pause between messages
+    # TODO Get pause between repeats
+    # TODO Do a pause function
     return parser.parse_args()
 
 def singlePlane(arguments):
