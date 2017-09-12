@@ -46,7 +46,6 @@ def auto_bool(x):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def argParser():
-    #TODO add some contraint checking
     description = 'This tool will generate ADS-B data in a form that a hackRF can broadcast. In addition to providing the information at the command the defaults can be changed in the config.cfg file and the the loggin config changed in logging.cfg.'
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('-i', '--icao', action='store', type=auto_int, dest='icao', default=cfg.get('plane', 'icao'), help='The ICAO number for the plane in hex. Ensure the ICAO is prefixed with \'0x\' to ensure this is parsed as a hex number. Default: %(default)s')
@@ -64,6 +63,75 @@ def argParser():
     parser.add_argument('--csv', '--csvfile', '--in', '--input', action='store', type=str, default=cfg.get('general', 'csvfile'), dest='csvfile', help='Import a CSV file with the plane data in it. Default: %(default)s')    
     # TODO Make it so it can do a static checksum
     return parser.parse_args()
+
+def singlePlane(arguments):
+    logger.info('Processing default and command line options for a single plane')
+    logger.info('Repeating the message %s times' % (arguments.repeats))
+    samples = bytearray()
+    for i in range(0, arguments.repeats):
+        modes = ModeS()
+        (df17_even, df17_odd) = modes.df17_pos_rep_encode(arguments.capability, arguments.icao, arguments.typecode, arguments.surveillancestatus, arguments.nicsupplementb, arguments.altitude, arguments.time, arguments.latitude, arguments.longitude, arguments.surface)
+
+        ppm = PPM()
+        df17_array = ppm.frame_1090es_ppm_modulate(df17_even, df17_odd)
+
+        hackrf = HackRF()
+        samples_array = hackrf.hackrf_raw_IQ_format(df17_array)
+        samples = samples+samples_array
+    return samples
+
+def manyPlanes(arguments):
+    logger.info('Processing CSV file')
+    logger.info('Repeating the message %s times' % (arguments.repeats))
+    samples = bytearray()
+    print(arguments.repeats)
+    for i in range(0, arguments.repeats):
+        with open(arguments.csvfile, newline='') as csvfile:
+            reader = csv.DictReader(csvfile, delimiter=',')
+            for row in reader:                
+                if not 'icao' in row.keys():
+                    row['icao'] = arguments.icao
+                row['icao'] = int(row['icao'], 0)
+                if not 'latitude' in row.keys():
+                    row['latitude'] = arguments.latitude
+                if not 'longitude' in row.keys():
+                    row['longitude'] = arguments.longitude
+                if not 'altitude' in row.keys():
+                    row['altitude'] = arguments.altitude
+                if not 'capability' in row.keys():
+                    row['capability'] = arguments.capability
+                if not 'typecode' in row.keys():
+                    row['typecode'] = arguments.typecode
+                if not 'surveillancestatus' in row.keys():
+                    row['surveillancestatus'] = arguments.surveillancestatus
+                if not 'nicsupplementb' in row.keys():
+                    row['nicsupplementb'] = arguments.nicsupplementb
+                if not 'time' in row.keys():
+                    row['time'] = arguments.time
+                if not 'surface' in row.keys():
+                    row['surface'] = arguments.surface
+                logger.debug('Row from CSV: %s' % (row))
+                print(row)
+                modes = ModeS()
+                (df17_even, df17_odd) = modes.df17_pos_rep_encode(row['capability'], row['icao'], row['typecode'], row['surveillancestatus'], row['nicsupplementb'], row['altitude'], row['time'], row['latitude'], row['longitude'], row['surface'])
+
+                ppm = PPM()
+                df17_array = ppm.frame_1090es_ppm_modulate(df17_even, df17_odd)
+
+                hackrf = HackRF()
+                samples_array = hackrf.hackrf_raw_IQ_format(df17_array)
+                samples = samples+samples_array
+    return samples
+
+def writeOutputFile(filename, data):
+    SamplesFile = open('tmp.iq8s', 'wb')
+    SamplesFile.write(data)
+    SamplesFile.close()
+    os.system('sync')
+    os.system('rm %s' % (filename)) 
+    os.system("dd if=tmp.iq8s of=%s bs=4k seek=63" % (filename)) # TODO redirect output to /dev/null
+    os.system('sync')
+    os.system('rm tmp.iq8s')   
     
 if __name__ == "__main__":
     global cfg
@@ -77,38 +145,12 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
     logger.info('Starting ADSB Encoder')
     logger.debug('The arguments: %s' % (arguments))
-
-    logger.info('Repeating the message %s times' % (arguments.repeats))
-    
-    SamplesFile = open('tmp.iq8s', 'wb')
+    data = None
     if arguments.csvfile == '':
-        logger.info('Processing default and command line options for a single plane')
-        for i in range(0, arguments.repeats):
-            modes = ModeS()
-            (df17_even, df17_odd) = modes.df17_pos_rep_encode(arguments.capability, arguments.icao, arguments.typecode, arguments.surveillancestatus, arguments.nicsupplementb, arguments.altitude, arguments.time, arguments.latitude, arguments.longitude, arguments.surface)
-
-            ppm = PPM()
-            df17_array = ppm.frame_1090es_ppm_modulate(df17_even, df17_odd)
-
-            hackrf = HackRF()
-            samples_array = hackrf.hackrf_raw_IQ_format(df17_array)
-
-            
-            SamplesFile.write(samples_array)
+        data = singlePlane(arguments)
     else:
-        logger.info('Processing CSV file')
-        with open(arguments.csvfile, newline='') as csvfile:
-            reader = csv.DictReader(csvfile, delimiter=',')
-            for row in reader:
-                logger.debug('Row from CSV: %s' % (row))
-                if not 'icao' in row.keys():
-                    print('Need ICAO')
-                if not 'latitude' in row.keys():
-                    print('Need Latitude')
+        data = manyPlanes(arguments)
+    writeOutputFile(arguments.outputfilename, data)
 
-    SamplesFile.close()
-    os.system('sync')    
-    os.system("dd if=tmp.iq8s of=%s bs=4k seek=63" % (arguments.outputfilename)) # TODO redirect output to /dev/null
-    os.system('sync')
-    os.system('rm tmp.iq8s')
+
 
