@@ -132,7 +132,7 @@ def writeOutputFile(filename, data):
     SamplesFile.close()
     os.system('sync')
     os.system('rm %s' % (filename)) 
-    os.system("dd if=tmp.iq8s of=%s bs=4k seek=63" % (filename)) # TODO redirect output to /dev/null
+    os.system("dd if=tmp.iq8s of=%s bs=4k seek=63 > /dev/null 2>&1" % (filename)) 
     os.system('sync')
     os.system('rm tmp.iq8s')   
     
