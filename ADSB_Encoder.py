@@ -87,14 +87,14 @@ def manyPlanes(arguments):
     logger.info('Processing CSV file')
     logger.info('Repeating the message %s times' % (arguments.repeats))
     samples = bytearray()
-    print(arguments.repeats)
     for i in range(0, arguments.repeats):
         with open(arguments.csvfile, newline='') as csvfile:
             reader = csv.DictReader(csvfile, delimiter=',')
             for row in reader:                
                 if not 'icao' in row.keys():
                     row['icao'] = arguments.icao
-                row['icao'] = int(row['icao'], 0)
+                else:
+                    row['icao'] = int(row['icao'], 0)
                 if not 'latitude' in row.keys():
                     row['latitude'] = arguments.latitude
                 if not 'longitude' in row.keys():
@@ -114,7 +114,6 @@ def manyPlanes(arguments):
                 if not 'surface' in row.keys():
                     row['surface'] = arguments.surface
                 logger.debug('Row from CSV: %s' % (row))
-                print(row)
                 modes = ModeS()
                 (df17_even, df17_odd) = modes.df17_pos_rep_encode(row['capability'], row['icao'], row['typecode'], row['surveillancestatus'], row['nicsupplementb'], row['altitude'], row['time'], row['latitude'], row['longitude'], row['surface'])
 
