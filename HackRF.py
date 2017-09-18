@@ -20,7 +20,6 @@ class HackRF:
         Returns:
             bytearray: containing the IQ data
         """
-        print(self.logger)
         self.logger.debug('Creating hackRF bytearray from the ppm stuff')
         signal = []
         bits = numpy.unpackbits(numpy.asarray(ppm, dtype=numpy.uint8))
