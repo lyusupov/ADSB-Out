@@ -84,17 +84,17 @@ def singlePlane(arguments):
     return samples
 
 def manyPlanes(arguments):
-    logger.info('Processing CSV file')
-    logger.info('Repeating the message %s times' % (arguments.repeats))
+    logger.info('Processing CSV file')    
     samples = bytearray()
-    print(arguments.repeats)
+    logger.info('Repeating the message %s times' % (arguments.repeats))
     for i in range(0, arguments.repeats):
         with open(arguments.csvfile, newline='') as csvfile:
             reader = csv.DictReader(csvfile, delimiter=',')
             for row in reader:                
                 if not 'icao' in row.keys():
                     row['icao'] = arguments.icao
-                row['icao'] = int(row['icao'], 0)
+                else:
+                    row['icao'] = int(row['icao'], 0)
                 if not 'latitude' in row.keys():
                     row['latitude'] = arguments.latitude
                 if not 'longitude' in row.keys():
@@ -114,7 +114,6 @@ def manyPlanes(arguments):
                 if not 'surface' in row.keys():
                     row['surface'] = arguments.surface
                 logger.debug('Row from CSV: %s' % (row))
-                print(row)
                 modes = ModeS()
                 (df17_even, df17_odd) = modes.df17_pos_rep_encode(row['capability'], row['icao'], row['typecode'], row['surveillancestatus'], row['nicsupplementb'], row['altitude'], row['time'], row['latitude'], row['longitude'], row['surface'])
 
@@ -127,12 +126,14 @@ def manyPlanes(arguments):
     return samples
 
 def writeOutputFile(filename, data):
+    logger.info('Writing tmp.iq8s file')
     SamplesFile = open('tmp.iq8s', 'wb')
     SamplesFile.write(data)
     SamplesFile.close()
     os.system('sync')
     os.system('rm %s' % (filename)) 
-    os.system("dd if=tmp.iq8s of=%s bs=4k seek=63" % (filename)) # TODO redirect output to /dev/null
+    logger.info('dd for file: %s' % (filename))
+    os.system("dd if=tmp.iq8s of=%s bs=4k seek=63 > /dev/null 2>&1" % (filename)) 
     os.system('sync')
     os.system('rm tmp.iq8s')   
     
@@ -154,6 +155,7 @@ if __name__ == "__main__":
     else:
         data = manyPlanes(arguments)
     writeOutputFile(arguments.outputfilename, data)
+    logger.info('Complete')
 
 
 
