@@ -84,9 +84,9 @@ def singlePlane(arguments):
     return samples
 
 def manyPlanes(arguments):
-    logger.info('Processing CSV file')
-    logger.info('Repeating the message %s times' % (arguments.repeats))
+    logger.info('Processing CSV file')    
     samples = bytearray()
+    logger.info('Repeating the message %s times' % (arguments.repeats))
     for i in range(0, arguments.repeats):
         with open(arguments.csvfile, newline='') as csvfile:
             reader = csv.DictReader(csvfile, delimiter=',')
@@ -126,11 +126,13 @@ def manyPlanes(arguments):
     return samples
 
 def writeOutputFile(filename, data):
+    logger.info('Writing tmp.iq8s file')
     SamplesFile = open('tmp.iq8s', 'wb')
     SamplesFile.write(data)
     SamplesFile.close()
     os.system('sync')
     os.system('rm %s' % (filename)) 
+    logger.info('dd for file: %s' % (filename))
     os.system("dd if=tmp.iq8s of=%s bs=4k seek=63 > /dev/null 2>&1" % (filename)) 
     os.system('sync')
     os.system('rm tmp.iq8s')   
@@ -153,6 +155,7 @@ if __name__ == "__main__":
     else:
         data = manyPlanes(arguments)
     writeOutputFile(arguments.outputfilename, data)
+    logger.info('Complete')
 
 
 
