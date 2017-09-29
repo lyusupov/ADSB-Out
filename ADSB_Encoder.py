@@ -137,8 +137,8 @@ def writeOutputFile(filename, data):
     os.system("dd if=%s of=%s bs=4k seek=63 > /dev/null 2>&1" % (tmpfile, filename)) 
     os.system('sync')
     os.system('rm %s'%(tmpfile))   
-    
-if __name__ == "__main__":
+
+def main():
     global cfg
     cfg = configparser.ConfigParser()
     cfg.read('config.cfg')
@@ -157,6 +157,31 @@ if __name__ == "__main__":
         data = manyPlanes(arguments)
     writeOutputFile(arguments.outputfilename, data)
     logger.info('Complete')
+
+def threadingCSV(csv):
+    global cfg
+    cfg = configparser.ConfigParser()
+    cfg.read('config.cfg')
+    
+    arguments = argParser()
+    arguments.csvfile = csv[0]
+    arguments.outputfilename = csv[1]
+    global logger
+    logging.config.fileConfig('logging.cfg')
+    logger = logging.getLogger(__name__)
+    logger.info('Starting ADSB Encoder')
+    logger.debug('The arguments: %s' % (arguments))
+    data = None
+    if arguments.csvfile == '':
+        data = singlePlane(arguments)
+    else:
+        data = manyPlanes(arguments)
+    writeOutputFile(arguments.outputfilename, data)
+    logger.info('Complete')
+    
+if __name__ == "__main__":
+    main()
+    
 
 
 
