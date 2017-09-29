@@ -126,16 +126,17 @@ def manyPlanes(arguments):
     return samples
 
 def writeOutputFile(filename, data):
-    logger.info('Writing tmp.iq8s file')
-    SamplesFile = open('tmp.iq8s', 'wb')
+    tmpfile = '%s.tmp'%(filename)
+    logger.info('Writing %s file'%(tmpfile))
+    SamplesFile = open(tmpfile, 'wb')
     SamplesFile.write(data)
     SamplesFile.close()
     os.system('sync')
     os.system('rm %s' % (filename)) 
     logger.info('dd for file: %s' % (filename))
-    os.system("dd if=tmp.iq8s of=%s bs=4k seek=63 > /dev/null 2>&1" % (filename)) 
+    os.system("dd if=%s of=%s bs=4k seek=63 > /dev/null 2>&1" % (tmpfile, filename)) 
     os.system('sync')
-    os.system('rm tmp.iq8s')   
+    os.system('rm %s'%(tmpfile))   
     
 if __name__ == "__main__":
     global cfg
