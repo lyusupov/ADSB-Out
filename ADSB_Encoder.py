@@ -126,18 +126,19 @@ def manyPlanes(arguments):
     return samples
 
 def writeOutputFile(filename, data):
-    logger.info('Writing tmp.iq8s file')
-    SamplesFile = open('tmp.iq8s', 'wb')
+    tmpfile = '%s.tmp'%(filename)
+    logger.info('Writing %s file'%(tmpfile))
+    SamplesFile = open(tmpfile, 'wb')
     SamplesFile.write(data)
     SamplesFile.close()
     os.system('sync')
     os.system('rm %s' % (filename)) 
     logger.info('dd for file: %s' % (filename))
-    os.system("dd if=tmp.iq8s of=%s bs=4k seek=63 > /dev/null 2>&1" % (filename)) 
+    os.system("dd if=%s of=%s bs=4k seek=63 > /dev/null 2>&1" % (tmpfile, filename)) 
     os.system('sync')
-    os.system('rm tmp.iq8s')   
-    
-if __name__ == "__main__":
+    os.system('rm %s'%(tmpfile))   
+
+def main():
     global cfg
     cfg = configparser.ConfigParser()
     cfg.read('config.cfg')
@@ -156,6 +157,31 @@ if __name__ == "__main__":
         data = manyPlanes(arguments)
     writeOutputFile(arguments.outputfilename, data)
     logger.info('Complete')
+
+def threadingCSV(csv):
+    global cfg
+    cfg = configparser.ConfigParser()
+    cfg.read('config.cfg')
+    
+    arguments = argParser()
+    arguments.csvfile = csv[0]
+    arguments.outputfilename = csv[1]
+    global logger
+    logging.config.fileConfig('logging.cfg')
+    logger = logging.getLogger(__name__)
+    logger.info('Starting ADSB Encoder')
+    logger.debug('The arguments: %s' % (arguments))
+    data = None
+    if arguments.csvfile == '':
+        data = singlePlane(arguments)
+    else:
+        data = manyPlanes(arguments)
+    writeOutputFile(arguments.outputfilename, data)
+    logger.info('Complete')
+    
+if __name__ == "__main__":
+    main()
+    
 
 
 
