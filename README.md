@@ -5,6 +5,9 @@ This repository contains "ADS-B Out" encoder for Tx-capable SDR hardware.
 It is currently written in architecture independent Python language and can be used as an add-on for existing
 open source "ADS-B In" solutions. One known good example is [Stratux](https://github.com/cyoung/stratux).
 
+ES (1090 MHz) variant of ADS-B surveillance technology is being considered here.<br>
+For UAT ADS-B (978 MHz) option, please, visit this repository: https://github.com/lyusupov/UAT-test-signal
+
 ## Disclaimer
 The source code is published for academic purpose only.
 
