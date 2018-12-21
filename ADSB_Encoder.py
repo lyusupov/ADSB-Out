@@ -398,7 +398,7 @@ if __name__ == "__main__":
     argc = len(argv)
     if argc != 5:
       print
-      print 'Usage: '+ argv[0] +'  <ICAO> <Latitude> <Longtitude> <Altitude>'
+      print 'Usage: '+ argv[0] +'  <ICAO> <Latitude> <Longitude> <Altitude>'
       print
       print '    Example: '+ argv[0] +'  0xABCDEF 12.34 56.78 9999.0'
       print
