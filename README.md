@@ -12,7 +12,7 @@ For UAT ADS-B (978 MHz) option, please, visit this repository: https://github.co
 The source code is published for academic purpose only.
 
 ## Instructions
-1. Execute *ADSB_Encoder.py* script with `<ICAO>` `<Latitude>` `<Longtitude>` `<Altitude>` arguments:
+1. Execute *ADSB_Encoder.py* script with `<ICAO>` `<Latitude>` `<Longitude>` `<Altitude>` arguments:
 ```
 $ ADSB_Encoder.py  0xABCDEF 12.34 56.78 9999.0
 $ ls Samples.iq8s
